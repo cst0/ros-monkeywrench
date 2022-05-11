@@ -1,0 +1,16 @@
+uint8 failure_mode
+uint8 FAIL_STOP_SENDING=1
+uint8 FAIL_USE_CONSTANT=2
+uint8 FAIL_SEND_GAUSSIAN_NOISE=4
+uint8 FAIL_SEND_UNIFORM_NOISE=8
+uint8 FAIL_CHANGETIME=16
+
+float32 constant
+float32 noise_std_dev
+float32 time_change
+
+float32 duration
+
+string[] apply_to_subtopics
+---
+bool response
