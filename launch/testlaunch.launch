@@ -1,0 +1,14 @@
+<launch>
+    <node name='source' pkg='monkeywrench' type='dummynode' output='screen'>
+        <param name="topic_type" value="std_msgs/Float32"/>
+        <param name="publish_topic" value="demo_pub"/>
+        <param name="publish_hz" value="15"/>
+        <param name="subscribe_topic" value=""/>
+    </node>
+    <node name='sink' pkg='monkeywrench' type='dummynode' output='screen'>
+        <param name="topic_type" value="std_msgs/Float32"/>
+        <param name="publish_topic" value=""/>
+        <param name="publish_hz" value="15"/>
+        <param name="subscribe_topic" value="demo_pub"/>
+    </node>
+</launch>
