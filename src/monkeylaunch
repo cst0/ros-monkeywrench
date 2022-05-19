@@ -3,10 +3,8 @@
 from copy import deepcopy
 import roslaunch
 import sys
-import os
 from roslaunch import config
 from roslaunch.core import Node
-import rospkg
 from typing import List
 
 original_load_config = config.load_config_default

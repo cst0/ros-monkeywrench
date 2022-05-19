@@ -24,7 +24,7 @@ class MonkeyWrench:
         self.sub = rospy.Subscriber(input_topic, itype, self.handle_sub, queue_size=10)
         self.pub = rospy.Publisher(output_topic, itype, queue_size=10)
         self.trigger = rospy.Service(
-            "trigger_error_{}".format(node_name), TriggerError, self.trigger_error_cb
+            "{}/mw_trigger".format(rospy.get_name()), TriggerError, self.trigger_error_cb
         )
         self.end_time = rospy.Time(0)
         self.has_modifications = False
@@ -186,7 +186,7 @@ def main():
     input_tail = input_topic.split("/")[-1]
     output_tail = output_topic.split("/")[-1]
     node_name = "monkeywrench_{}_{}".format(input_tail, output_tail)
-    rospy.init_node(node_name, anonymous=True)
+    init = rospy.init_node(node_name, anonymous=True)
     mw = MonkeyWrench(node_name, input_topic, output_topic)
     rospy.on_shutdown(mw.clean_shutdown)
     rospy.spin()
