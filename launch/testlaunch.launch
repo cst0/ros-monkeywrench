@@ -11,4 +11,18 @@
         <param name="publish_hz" value="15"/>
         <param name="subscribe_topic" value="demo_pub"/>
     </node>
+
+    <node name='other_source' pkg='monkeywrench' type='dummynode' output='screen'>
+        <param name="topic_type" value="std_msgs/Float32"/>
+        <param name="publish_topic" value="other_topic"/>
+        <param name="publish_hz" value="15"/>
+        <param name="subscribe_topic" value=""/>
+    </node>
+    <node name='other_topic' pkg='monkeywrench' type='dummynode' output='screen'>
+        <param name="topic_type" value="std_msgs/Float32"/>
+        <param name="publish_topic" value=""/>
+        <param name="publish_hz" value="15"/>
+        <param name="subscribe_topic" value="other_topic"/>
+    </node>
+
 </launch>

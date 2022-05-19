@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+
+import roslaunch
+import sys
+import os
+from roslaunch import config
+from roslaunch.core import Node
+import rospkg
+import yaml
+
+original_load_config = config.load_config_default
+
+config_file = sys.argv[-1]
+
+def construct_remappings(subs, pubs, topics_of_interest):
+    remapping_in = []
+    remapping_out = []
+    for t in topics_of_interest:
+        if t in subs:
+            remapping_in.append([t, "{}_mwin".format(t)])
+        if t in pubs:
+            remapping_out.append(["{}_mwout".format(t), t])
+    return remapping_in, remapping_out
+
+
+def get_node_file(node: Node):
+    package_path = rospkg.RosPack().get_path(node.package)
+    file_name = node.type
+    for (root, _, files) in os.walk(package_path):
+        if file_name in files:
+            return os.path.join(root, file_name)
+    return ''
+
+def new_load_config(
+    roslaunch_files,
+    port,
+    roslaunch_strs=None,
+    loader=None,
+    verbose=False,
+    assign_machines=True,
+    ignore_unset_args=False,
+):
+    config = original_load_config(
+        roslaunch_files,
+        port,
+        roslaunch_strs,
+        loader,
+        verbose,
+        assign_machines,
+        ignore_unset_args,
+    )
+
+    for n in config.nodes:
+        n.remap_args += construct_remappings(subs, pubs, topics_of_interest)
+    return config
+
+
+config.load_config_default = new_load_config
+roslaunch.main(sys.argv[:-1])
