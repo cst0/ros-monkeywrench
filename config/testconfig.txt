@@ -1,0 +1,3 @@
+source:demo_pub
+other_source:other_topic
+wonk:third_topic

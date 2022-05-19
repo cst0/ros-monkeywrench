@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+
+from copy import deepcopy
+import roslaunch
+import sys
+import os
+from roslaunch import config
+from roslaunch.core import Node
+import rospkg
+from typing import List
+
+original_load_config = config.load_config_default
+
+config_file = sys.argv[-1]
+
+
+def construct_remappings(n, source_nodes: List, source_topics: List):
+    remappings = []
+    new_node = None
+    for t in source_topics:
+        if n.name == source_nodes[source_topics.index(t)]:
+            index = source_nodes.index(n.name)
+            remappings.append(
+                [source_topics[index], "{}_mwin".format(source_topics[index])]
+            )
+            new_node = construct_monkeynode(t, n)
+        else:
+            remappings.append([t, "{}_mwout".format(t)])
+    return n.remap_args + remappings, new_node
+
+
+def construct_monkeynode(t, source_node: Node):
+    n = deepcopy(source_node)
+    n.name = n.name + "_mw" if n.name is not None else "_mw"
+    n.package = "monkeywrench"
+    n.type = "monkeywrench"
+    n.remap_args += [["sub", "{}_mwin".format(t)], ["pub", "{}_mwout".format(t)]]
+    return n
+
+
+def new_load_config(
+    roslaunch_files,
+    port,
+    roslaunch_strs=None,
+    loader=None,
+    verbose=False,
+    assign_machines=True,
+    ignore_unset_args=False,
+):
+    config = original_load_config(
+        roslaunch_files,
+        port,
+        roslaunch_strs,
+        loader,
+        verbose,
+        assign_machines,
+        ignore_unset_args,
+    )
+
+    source_topics = []
+    source_nodes = []
+    with open(config_file, "r") as t:
+        for line in t.readlines():
+            stripchars = " \t\r\n\"'"
+            node_topic_pair = line.split(":")
+            source_nodes.append(node_topic_pair[0].strip(stripchars))
+            source_topics.append(node_topic_pair[1].strip(stripchars))
+
+    new_nodes = []
+    for n in config.nodes:
+        n.remap_args, new_node = construct_remappings(n, source_nodes, source_topics)
+        if new_node is not None:
+            new_nodes.append(new_node)
+    config.nodes += new_nodes
+    return config
+
+
+config.load_config_default = new_load_config
+roslaunch.main(sys.argv[:-1])

@@ -167,7 +167,7 @@ class MonkeyWrench:
         self.changetime = changetime
 
         self.constant = srv.constant
-        self.noise_std_dev = srv.noise_std_dev if srv.noise_std_dev is not 0 else 1
+        self.noise_std_dev = srv.noise_std_dev if srv.noise_std_dev != 0 else 1
         self.time_change = srv.time_change
 
         self.subtopics = srv.apply_to_subtopics
