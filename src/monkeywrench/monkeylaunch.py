@@ -11,6 +11,7 @@ from roslaunch.core import Node
 original_load_config = None
 config_file = None
 
+
 def construct_remappings(n, source_nodes: List, source_topics: List):
     remappings = []
     new_node = None
@@ -26,9 +27,10 @@ def construct_remappings(n, source_nodes: List, source_topics: List):
     return n.remap_args + remappings, new_node
 
 
-def construct_monkeynode(t, source_node: Node):
+def construct_monkeynode(t: str, source_node: Node):
     n = deepcopy(source_node)
-    n.name = n.name + "_mw" if n.name is not None else "_mw"
+    assert n.name is not None
+    n.name = n.name+"_MW_"+t.replace("/", "")
     n.package = "monkeywrench"
     n.type = "monkeywrench"
     n.remap_args += [["sub", "{}_mwin".format(t)], ["pub", "{}_mwout".format(t)]]
@@ -72,6 +74,7 @@ def new_load_config(
             new_nodes.append(new_node)
     config.nodes += new_nodes
     return config
+
 
 def main():
     global original_load_config

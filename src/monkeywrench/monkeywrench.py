@@ -59,7 +59,8 @@ class MonkeyWrench:
             msg = self.tweak_time(msg)
 
         func = self.generate_function()
-        self.walk_and_apply("", msg, func, self.subtopics)
+        msg = self.walk_and_apply("", msg, func, self.subtopics)
+        self.pub.publish(msg)
 
     def generate_function(self):
         def generated(value):
@@ -80,19 +81,22 @@ class MonkeyWrench:
     def walk_and_apply(self, message_subtopic, msg, func, filter_in):
         for slot in msg.__slots__:
             if not self.allowed_subtopic(message_subtopic, slot, filter_in):
+                rospy.loginfo(filter_in)
                 return  # skip
             attr = msg.__getattribute__(slot)
             if type(attr) is int or type(attr) is float:
-                msg.__setattribute__(slot, func(msg.__getattribute__(slot)))
+                msg.__setattr__(slot, func(msg.__getattribute__(slot)))
             else:
                 new_message_subtopic = message_subtopic + "/" + str(attr)
                 self.walk_and_apply(
                     new_message_subtopic, msg.__getattribute__(slot), func, filter_in
                 )
 
+        return msg
+
     def allowed_subtopic(self, message_subtopic, attr, filter_in):
         combined = ("{}/{}".format(message_subtopic, attr)).lstrip("/")
-        if len(filter_in) == 0:
+        if len(filter_in) == 0 or (len(filter_in) == 1 and filter_in[0] == ""):
             return True
         return combined in filter_in
 
