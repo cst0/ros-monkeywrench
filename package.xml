@@ -2,7 +2,7 @@
 <package format="2">
   <name>monkeywrench</name>
 
-  <version>0.1.0</version>
+  <version>0.0.9</version>
   <description>throw a monkeywrench in your robot code</description>
   <maintainer email="chris@cthierauf.com">cst0 (Chris Thierauf)</maintainer>
   <license>Apache2.0</license>
