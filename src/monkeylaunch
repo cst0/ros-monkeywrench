@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
 from copy import deepcopy
-import roslaunch
 import sys
+from typing import List
+
+import roslaunch
 from roslaunch import config
 from roslaunch.core import Node
-from typing import List
 
 original_load_config = config.load_config_default
 
