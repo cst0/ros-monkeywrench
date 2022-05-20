@@ -8,10 +8,8 @@ import roslaunch
 from roslaunch import config
 from roslaunch.core import Node
 
-original_load_config = config.load_config_default
-
-config_file = sys.argv[-1]
-
+original_load_config = None
+config_file = None
 
 def construct_remappings(n, source_nodes: List, source_topics: List):
     remappings = []
@@ -46,6 +44,7 @@ def new_load_config(
     assign_machines=True,
     ignore_unset_args=False,
 ):
+    assert original_load_config is not None, "Could not import load_config function"
     config = original_load_config(
         roslaunch_files,
         port,
@@ -58,6 +57,7 @@ def new_load_config(
 
     source_topics = []
     source_nodes = []
+    assert config_file is not None, "Could not open config file"
     with open(config_file, "r") as t:
         for line in t.readlines():
             stripchars = " \t\r\n\"'"
@@ -73,6 +73,10 @@ def new_load_config(
     config.nodes += new_nodes
     return config
 
-
-config.load_config_default = new_load_config
-roslaunch.main(sys.argv[:-1])
+def main():
+    global original_load_config
+    global config_file
+    original_load_config = config.load_config_default
+    config_file = sys.argv[-1]
+    config.load_config_default = new_load_config
+    roslaunch.main(sys.argv[:-1])
