@@ -28,7 +28,3 @@ def main():
         if publisher is not None:
             publisher.publish(message_type())
         rate.sleep()
-
-
-if __name__ == "__main__":
-    main()

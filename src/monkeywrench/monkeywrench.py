@@ -193,7 +193,3 @@ def main():
     mw = MonkeyWrench(input_topic, output_topic)
     rospy.on_shutdown(mw.clean_shutdown)
     rospy.spin()
-
-
-if __name__ == "__main__":
-    main()
