@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from monkeywrench.monkeywrench import main
+from monkeywrench.node_feature_analysis import main
 
 if __name__ == "__main__":
     main()
